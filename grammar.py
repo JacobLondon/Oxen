@@ -23,22 +23,34 @@ Tokens = OrderedDict({
 })
 
 class GTok(Enum):
+    # terminals
     Number = 0
-    Expression = 1
-    Operation = 2
+    Operator = 1
+    Ident = 2
+    # non-terminals
+    Expression = 3
+    Operation = 4
 
 Grammar = OrderedDict({
+    # terminal parsing
     GTok.Number: OrderedDict({
         (Tok.Float,): lambda v: float(v),
         (Tok.Integer,): lambda v: int(v),
     }),
-    GTok.Expression: OrderedDict({
+    GTok.Operator: OrderedDict({
+        (Tok.Add,): lambda v: str(v),
+    }),
+    GTok.Ident: OrderedDict({
         (Tok.Identifier,): lambda v: str(v),
+    }),
+    # non-terminal parsing
+    GTok.Expression: OrderedDict({
+        (GTok.Ident,): lambda v: str(v),
         (GTok.Number,): lambda v: v,
     }),
     GTok.Operation: OrderedDict({
-        (GTok.Expression, Tok.Add, GTok.Expression,): lambda lhs, rhs: (lhs + rhs),
-    })
+        (GTok.Expression, GTok.Operator, GTok.Expression,): lambda lhs, op, rhs: (lhs + rhs),
+    }),
 })
 
 def strip(tokens:list):
