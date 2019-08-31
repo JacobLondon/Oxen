@@ -115,5 +115,5 @@ if __name__ == '__main__':
     tokens = strip(lex("1.1+1+1"))
     terminals(tokens, root)
     nonterminals(root)
-    print(evaluate(root))
-    print('\n', root)
+    #print(evaluate(root))
+    print(root)
