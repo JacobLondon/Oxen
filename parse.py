@@ -58,7 +58,6 @@ def nonterminals(parent):
                 length = len(subgtok)
                 # check if the current token is a subgrammar
                 tup = tuple([c.gtok for c in parent.children[i:i+length]])
-                #print(i, length, gtok, tup, parent.children[i])
 
                 # Note: the slice may no longer be the same length if OOB
                 if len(tup) != length:
