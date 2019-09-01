@@ -3,38 +3,26 @@ from token import *
 from grammar import *
 
 class Node:
-    TITLE = "Node("
+    TITLE = "Node{"
     def __init__(self, gtok):
-        self.gtok = gtok     # can only be GTok 
-        self.children = []   # can be Token or another Node
+        self.gtok = gtok
+        self.children = []
         self.action = None
     def __str__(self):
         builder = Node.TITLE
         if self.gtok:
-            builder += f"{self.gtok}["
+            builder += f"{self.gtok}" + "{"
         for c in self.children:
-            builder += f"{str(c)},"
+            builder += f"{str(c)}"
         if self.gtok:
-            builder += "]"
+            builder += "}"
         if builder != Node.TITLE:
-            builder += ")"
+            builder += "}"
         else:
             builder = ""
         return builder
     def __repr__(self):
         return self.__str__()
-
-# will just work
-def _parse(tokens:list):
-    for i, tok in enumerate(tokens):
-        for gtok, grammars in Grammar.items():
-            for grammar, action in grammars.items():
-                # use the first grammar encountered
-                if tuple(map(lambda t: t.tok, tokens[i:i+len(grammar)])) == grammar:
-                    tokens[i] = Token(gtok, tok)
-                    parse(tokens)
-                    break
-    return tokens
 
 def terminals(tokens:list, parent):
     # 1:1, for every Token, there should be a GTok
@@ -58,8 +46,6 @@ def terminals(tokens:list, parent):
             pass # finished this item, skip the non-terminals
 
 def nonterminals(parent):
-    print('='*50)
-
     i = -1
     while True:
         if i + 1 < len(parent.children): i += 1
@@ -102,18 +88,20 @@ def nonterminals(parent):
 
 def evaluate(root):
     for child in root.children:
+        # the terminal GTok holding the Token
         if type(child) == Node and len(child.children) == 1 and type(child.children[0]) == Token:
             return child.action(child.children[0].value)
-        else:
-            print(child.gtok)
-            return child.action(*[c for c in evaluate(child)])
+        # non-terminal
+        elif type(child) != Token:
+            return child.action(*[evaluate(c) for c in child.children])
 
 # Operation[Expression[Number[Integer(2)]], Add[], Expression[Number[Float(1.1)]]]
 
 if __name__ == '__main__':
     root = Node(None)
-    tokens = strip(lex("1.1+1+1"))
+    tokens = strip(lex("1.1+1"))
     terminals(tokens, root)
     nonterminals(root)
-    #print(evaluate(root))
-    print(root)
+    print(evaluate(root))
+    with open('temp.c', 'w') as temp:
+        temp.write(str(root))
