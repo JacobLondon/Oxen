@@ -88,14 +88,13 @@ def nonterminals(parent):
 
 def evaluate(root):
     for child in root.children:
-        # the terminal GTok holding the Token
+        # terminal GTok holding the Token
         if type(child) == Node and len(child.children) == 1 and type(child.children[0]) == Token:
             return child.action(child.children[0].value)
-        # non-terminal
+        # non-terminal GTok
         elif type(child) != Token:
             return child.action(*[evaluate(c) for c in child.children])
-
-# Operation[Expression[Number[Integer(2)]], Add[], Expression[Number[Float(1.1)]]]
+        pass # else continue
 
 if __name__ == '__main__':
     root = Node(None)
