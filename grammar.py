@@ -6,30 +6,46 @@ Modify this file to change tokens and parse grammar.
 """
 
 class Tok(Enum):
-    Whitespace = 0
-    Identifier = 1
-    Integer = 2
-    Float = 3
-    Add = 4
-    Unknown = 5
+    Whitespace  = 0
+    Float       = 1
+    Mult        = 2
+    Divide      = 3
+    Integer     = 4
+    Add         = 5
+    Subtract    = 6
+    Unknown     = 7
 
 Tokens = OrderedDict({
     Tok.Whitespace: r"[\s\t\r\n]+",
-    Tok.Identifier: r"[_a-zA-Z][_a-zA-Z0-9]*",
     Tok.Float:      r"[0-9]+\.[0-9]*",
+    Tok.Mult:       r"\*",
+    Tok.Divide:     r"\/",
     Tok.Integer:    r"[0-9]+",
     Tok.Add:        r"\+",
+    Tok.Subtract:   r"-",
     Tok.Unknown:    r".",
 })
 
 class GTok(Enum):
     # terminals
-    Number = 0
-    Operator = 1
-    Ident = 2
+    Number      = 0
+    Operator    = 1
+    Ident       = 2
     # non-terminals
-    Expression = 3
-    Operation = 4
+    Expression  = 3
+    Operation   = 4
+
+def eOperation(lhs, op, rhs):
+    if op == '*':
+        return lhs * rhs
+    elif op == '/':
+        return lhs / rhs
+    elif op == '+':
+        return lhs + rhs
+    elif op == '-':
+        return lhs - rhs
+    else:
+        return True
 
 Grammar = OrderedDict({
     # terminal parsing
@@ -38,10 +54,10 @@ Grammar = OrderedDict({
         (Tok.Integer,): lambda v: int(v),
     }),
     GTok.Operator: OrderedDict({
+        (Tok.Mult,): lambda v: str(v),
+        (Tok.Divide,): lambda v: str(v),
         (Tok.Add,): lambda v: str(v),
-    }),
-    GTok.Ident: OrderedDict({
-        (Tok.Identifier,): lambda v: str(v),
+        (Tok.Subtract,): lambda v: str(v),
     }),
     # non-terminal parsing
     GTok.Expression: OrderedDict({
@@ -49,7 +65,7 @@ Grammar = OrderedDict({
         (GTok.Number,): lambda v: v,
     }),
     GTok.Operation: OrderedDict({
-        (GTok.Expression, GTok.Operator, GTok.Expression,): lambda lhs, op, rhs: (lhs + rhs),
+        (GTok.Expression, GTok.Operator, GTok.Expression,): lambda lhs, op, rhs: eOperation(lhs, op, rhs),
     }),
 })
 

@@ -1,5 +1,5 @@
 from copy import copy
-from token import *
+from lexer import *
 from grammar import *
 
 class Node:
@@ -88,19 +88,21 @@ def nonterminals(parent):
 
 def evaluate(root):
     for child in root.children:
-        # terminal GTok holding the Token
+        # terminal GTok holding the Token singleton
         if type(child) == Node and len(child.children) == 1 and type(child.children[0]) == Token:
             return child.action(child.children[0].value)
         # non-terminal GTok
-        elif type(child) != Token:
+        if type(child) != Token:
             return child.action(*[evaluate(c) for c in child.children])
-        pass # else continue
-
+        if type(child) == Token:
+            return child.value
+        
 if __name__ == '__main__':
-    root = Node(None)
-    tokens = strip(lex("1.1+1"))
-    terminals(tokens, root)
-    nonterminals(root)
-    print(evaluate(root))
-    with open('temp.c', 'w') as temp:
-        temp.write(str(root))
+    while True:
+        root = Node(None)
+        tokens = strip(lex(input(">>> ")))
+        terminals(tokens, root)
+        nonterminals(root)
+        print(evaluate(root))
+        with open('temp.c', 'w') as temp:
+            temp.write(str(root))
