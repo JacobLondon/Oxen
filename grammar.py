@@ -54,14 +54,14 @@ Grammar = OrderedDict({
         (Tok.Integer,):     lambda v: int(v),
     }),
     GTok.Operator: OrderedDict({
-        (Tok.Mult,):        lambda v: str(v),
-        (Tok.Divide,):      lambda v: str(v),
-        (Tok.Add,):         lambda v: str(v),
-        (Tok.Subtract,):    lambda v: str(v),
+        (Tok.Mult,):        str,
+        (Tok.Divide,):      str,
+        (Tok.Add,):         str,
+        (Tok.Subtract,):    str,
     }),
     # non-terminal parsing
     GTok.Expression: OrderedDict({
-        (GTok.Ident,):      lambda v: str(v),
+        (GTok.Ident,):      str,
         (GTok.Number,):     lambda v: v,
     }),
     GTok.Operation: OrderedDict({
