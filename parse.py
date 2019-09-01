@@ -52,7 +52,7 @@ def nonterminals(parent):
         else: break
     
         for gtok, subgrammars in Grammar.items():
-            for subgtok, subgrammar in subgrammars.items():
+            for subgtok, action in subgrammars.items():
                 # get the subgrammar tuple (1-any length), and check if those items which belong to
                 # parent's children at the current slice is the same
                 length = len(subgtok)
@@ -71,7 +71,7 @@ def nonterminals(parent):
                     # there are 'length' number of children in this Node
                     # add them to the current node
                     node.children = copy(parent.children[i:i+length])
-                    node.action = Grammar[gtok][tup]
+                    node.action = action#Grammar[gtok][tup]
                     # now there are 'length' number of unecessary children in parent
                     # remove the slice of children, and replace with 'node'
                     remove_at = list(range(i, i+length))
