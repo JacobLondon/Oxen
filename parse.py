@@ -71,7 +71,7 @@ def nonterminals(parent):
                     # there are 'length' number of children in this Node
                     # add them to the current node
                     node.children = copy(parent.children[i:i+length])
-                    node.action = action#Grammar[gtok][tup]
+                    node.action = action # Grammar[gtok][tup] <- probably less readable
                     # now there are 'length' number of unecessary children in parent
                     # remove the slice of children, and replace with 'node'
                     remove_at = list(range(i, i+length))
