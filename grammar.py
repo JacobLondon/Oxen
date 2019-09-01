@@ -50,19 +50,19 @@ def eOperation(lhs, op, rhs):
 Grammar = OrderedDict({
     # terminal parsing
     GTok.Number: OrderedDict({
-        (Tok.Float,): lambda v: float(v),
-        (Tok.Integer,): lambda v: int(v),
+        (Tok.Float,):       lambda v: float(v),
+        (Tok.Integer,):     lambda v: int(v),
     }),
     GTok.Operator: OrderedDict({
-        (Tok.Mult,): lambda v: str(v),
-        (Tok.Divide,): lambda v: str(v),
-        (Tok.Add,): lambda v: str(v),
-        (Tok.Subtract,): lambda v: str(v),
+        (Tok.Mult,):        lambda v: str(v),
+        (Tok.Divide,):      lambda v: str(v),
+        (Tok.Add,):         lambda v: str(v),
+        (Tok.Subtract,):    lambda v: str(v),
     }),
     # non-terminal parsing
     GTok.Expression: OrderedDict({
-        (GTok.Ident,): lambda v: str(v),
-        (GTok.Number,): lambda v: v,
+        (GTok.Ident,):      lambda v: str(v),
+        (GTok.Number,):     lambda v: v,
     }),
     GTok.Operation: OrderedDict({
         (GTok.Expression, GTok.Operator, GTok.Expression,): lambda lhs, op, rhs: eOperation(lhs, op, rhs),
