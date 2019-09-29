@@ -24,8 +24,14 @@ Tokens = OrderedDict({
 })
 
 class MyLexer(Lexer):
-    def __init__(self):
-        Lexer.__init__(self, Tokens)
+    def __init__(self, tokens):
+        Lexer.__init__(self, tokens)
 
-    def strip(self, tokens: list):
-        return list(filter(lambda t: t.tok != Tok.Whitespace, tokens))
+    def strip(self, token: Tok):
+        self.tokenized = list(filter(lambda t: t.tok != token, self.tokenized))
+        return self
+
+if __name__ == '__main__':
+    l = MyLexer(Tokens)
+    l.lex("10 * 5 is 50.").strip(Tok.Whitespace)
+    print(l.tokenized)

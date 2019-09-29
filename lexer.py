@@ -39,4 +39,4 @@ class Lexer:
             if not matched:
                 print(f"Failure to tokenize:\n{text}")
                 exit(-1)
-        return self.tokenized
+        return self
