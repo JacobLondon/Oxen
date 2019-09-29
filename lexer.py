@@ -1,5 +1,4 @@
 from collections import OrderedDict
-from enum import Enum
 import re
 from typing import List
 
