@@ -24,15 +24,7 @@ Tokens = OrderedDict({
     Tok.Unknown:    r".",
 })
 
-class MyLexer(Lexer):
-    def __init__(self, tokens):
-        Lexer.__init__(self, tokens)
-
-    def strip(self, token: Tok):
-        self.tokenized = list(filter(lambda t: t.tok != token, self.tokenized))
-        return self
-
 if __name__ == '__main__':
-    l = MyLexer(Tokens)
+    l = Lexer(Tokens)
     l.lex("10 * 5 is 50.").strip(Tok.Whitespace)
     print(l.tokenized)

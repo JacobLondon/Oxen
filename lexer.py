@@ -1,6 +1,11 @@
 from collections import OrderedDict
+from enum import Enum
 import re
 from typing import List
+
+# overwritten by user
+Tok: Enum = None
+Tokens: OrderedDict = None
 
 class Token:
     def __init__(self, tok, value):
@@ -39,3 +44,9 @@ class Lexer:
                 print(f"Failure to tokenize:\n{text}")
                 exit(-1)
         return self
+
+    def strip(self, token: Tok):
+        self.tokenized = list(filter(lambda t: t.tok != token, self.tokenized))
+        return self
+
+
