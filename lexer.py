@@ -4,7 +4,8 @@ import re
 from typing import List
 
 # overwritten by user
-Tok: Enum = None
+class Tok(Enum):
+    pass
 Tokens: OrderedDict = None
 
 class Token:
@@ -22,7 +23,7 @@ class Lexer:
         self.tokens: OrderedDict = tokens
         self.tokenized: List[Token] = []
 
-    def lex(self, text: str) -> list:
+    def lex(self, text: str) -> List[Tok]:
         while text:
             matched = False
             for tok, reg in self.tokens.items():
