@@ -26,5 +26,6 @@ Tokens = OrderedDict({
 
 if __name__ == '__main__':
     l = Lexer(Tokens)
-    l.lex("10 * 5 is 50.").strip(Tok.Whitespace)
+    l.read("10 * 5 is 50.").lex().strip(Tok.Whitespace)
+    print(l.find([Tok.Unknown]))
     print(l.tokenized)
