@@ -1,7 +1,8 @@
 from collections import OrderedDict
-from enum import Enum
+from enum import Enum, unique
 from lexer import Lexer
 
+@unique
 class Tok(Enum):
     Whitespace  = 0
     Float       = 1
