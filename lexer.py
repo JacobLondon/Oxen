@@ -8,7 +8,7 @@ from typing import List
 @unique
 class Tok(Enum):
     pass
-Tokens: OrderedDict = None
+Definitions: OrderedDict = None
 
 class Token:
     def __init__(self, tok, value):
@@ -21,10 +21,10 @@ class Token:
 
 class Lexer:
 
-    def __init__(self, tokens: OrderedDict):
+    def __init__(self, definitions: OrderedDict):
         self.text: str = ""
-        self.tokens: OrderedDict = tokens
-        self.tokenized: List[Token] = []
+        self.definitions: OrderedDict = definitions
+        self.tokens: List[Token] = []
 
     def read(self, text: str):
         self.text = text
@@ -41,7 +41,7 @@ class Lexer:
         text = copy.deepcopy(self.text)
         while text:
             matched = False
-            for tok, reg in self.tokens.items():
+            for tok, reg in self.definitions.items():
                 # look for the token with the next highest priority
                 found = re.search(reg, text)
                 if not found:
@@ -58,7 +58,7 @@ class Lexer:
                 else:
                     colno += end
                 # record token
-                self.tokenized.append(Token(tok, text[start:end]))
+                self.tokens.append(Token(tok, text[start:end]))
                 text = text[end:]
                 break
             # ensure no infinite loop
@@ -68,11 +68,11 @@ class Lexer:
         return self
 
     def strip(self, token: Tok):
-        self.tokenized = list(filter(lambda t: t.tok != token, self.tokenized))
+        self.tokens = list(filter(lambda t: t.tok != token, self.tokens))
         return self
 
     def find(self, pattern: List[Tok]) -> int:
-        for i, _ in enumerate(self.tokenized):
-            tokens = [t.tok for t in self.tokenized]
+        for i, _ in enumerate(self.tokens):
+            tokens = [t.tok for t in self.tokens]
             if tokens[i:i+len(pattern)] == pattern:
                 return i
