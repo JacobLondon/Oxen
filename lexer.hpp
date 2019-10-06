@@ -5,7 +5,7 @@
 
 struct Token {
     Token(int tok, std::string value);
-    std::string str(std::vector<std::string> lookup);
+    std::string str();
     int tok;
     std::string value;
 };

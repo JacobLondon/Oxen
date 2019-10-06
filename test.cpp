@@ -3,11 +3,21 @@
 
 int main()
 {
+    enum Tokens {
+        WHITESPACE,
+        IDENTIFIER,
+        FLOAT,
+        INTEGER,
+        MULTIPLY,
+        ADD,
+        UNKNOWN,
+    };
+
     std::vector<std::regex> defs {
-        std::regex{"[\\s\t\r\n]"},              // whitespace
+        std::regex{"[\\s\t\r\n]+"},             // whitespace
         std::regex{"[a-zA-Z_]+[a-zA-Z0-9_]*"},  // identifier
         std::regex{"[0-9]+\\.[0-9]*"},          // float
-        std::regex{"[0-9]"},                    // integer
+        std::regex{"[0-9]+"},                   // integer
         std::regex{"\\*"},                      // multiply
         std::regex{"\\+"},                      // add
         std::regex{"."},                        // unknown
@@ -24,14 +34,14 @@ int main()
     };
 
     Lexer mylexer{defs};
-    mylexer.read("10 * 5 is 50.", false);
+    mylexer.read("test.txt", true);
     mylexer.lex();
+    mylexer.strip(WHITESPACE); // whitespace
 
-    std::printf("[");
-    for (Token t : mylexer.tokens) {
-        std::cout << t.str(lookup) << " ";
-    }
-    std::printf("]\n");
+    std::cout << "[";
+    for (Token t : mylexer.tokens)
+        std::cout << lookup[t.tok] << "(" << t.value << ") ";
+    std::cout << "]" << std::endl;
 
     return 0;
 }
