@@ -14,31 +14,38 @@ class Token:
     def __init__(self, tok, value):
         self.tok = tok
         self.value = value
+
     def __str__(self):
         return f"{self.tok}({self.value})"
+
     def __repr__(self):
         return self.__str__()
+
+    def cmp(self, token):
+        return self.tok == token
 
 class Lexer:
 
     def __init__(self, definitions: OrderedDict):
+        self.current_file: str = ""
         self.text: str = ""
         self.definitions: OrderedDict = definitions
         self.tokens: List[Token] = []
 
-    def read(self, text: str):
-        self.text = text
-        return self
-
-    def fread(self, filename: str):
-        with open(filename, 'r') as input_file:
-            self.read(input_file.read())
+    def read(self, text: str, isfile=False):
+        if isfile:
+            with open(text, 'r') as input_file:
+                self.text = input_file.read()
+                self.current_file = copy.deepcopy(text)
+        else:
+            self.text = text
         return self
 
     def lex(self):
         lineno = 0
         colno  = 0
         text = copy.deepcopy(self.text)
+
         while text:
             matched = False
             for tok, reg in self.definitions.items():
@@ -63,7 +70,7 @@ class Lexer:
                 break
             # ensure no infinite loop
             if not matched:
-                print(f"Unexpected token on line {lineno}:{colno}:\n\t'{text[:start]}'")
+                print(f"{self.current_file}:{lineno}:{colno}\nUnexpected token(s): '{text}'")
                 exit(-1)
         return self
 
