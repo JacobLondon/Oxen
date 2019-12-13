@@ -1,32 +1,31 @@
 from collections import OrderedDict
-from enum import Enum, unique
-from lexer import Lexer, Token
+from lexer import Lexer, Token, Syms
 from typing import List
 
-@unique
-class Tok(Enum):
-    Whitespace  = 0
-    Float       = 1
-    Mult        = 2
-    Divide      = 3
-    Integer     = 4
-    Add         = 5
-    Subtract    = 6
-    Unknown     = 7
-    LParen      = 8
-    RParen      = 9
+table = Syms([
+    "Whitespace",
+    "Float",
+    "Integer",
+    "Mult",
+    "Divide",
+    "Add",
+    "Subtract",
+    "LParen",
+    "RParen",
+    "Unknown",
+])
 
 Definitions = OrderedDict({
-    Tok.Whitespace: r"[\s\t\r\n]+",
-    Tok.Float:      r"[0-9]+\.[0-9]*",
-    Tok.Integer:    r"[0-9]+",
-    Tok.LParen:     r"\(",
-    Tok.RParen:     r"\)",
-    Tok.Mult:       r"\*",
-    Tok.Divide:     r"\/",
-    Tok.Add:        r"\+",
-    Tok.Subtract:   r"-",
-    Tok.Unknown:    r".",
+    table.Whitespace: r"[\s\t\r\n]+",
+    table.Float:      r"[0-9]+\.[0-9]*",
+    table.Integer:    r"[0-9]+",
+    table.LParen:     r"\(",
+    table.RParen:     r"\)",
+    table.Mult:       r"\*",
+    table.Divide:     r"\/",
+    table.Add:        r"\+",
+    table.Subtract:   r"-",
+    table.Unknown:    r".",
 })
 
 """
@@ -49,11 +48,11 @@ class Parser:
 
     # factor: (INTEGER | FLOAT) | (LPAREN expr RPAREN)
     def factor(self):
-        if self.curr.cmp(Tok.Float):
+        if self.curr.cmp(table.Float):
             self.eat(self.curr.value)
-        elif self.curr.cmp(Tok.Integer):
+        elif self.curr.cmp(table.Integer):
             self.eat(self.curr.value)
-        elif self.curr.cmp(Tok.LParen):
+        elif self.curr.cmp(table.LParen):
             self.eat("(")
             self.expr()
             self.eat(")")
@@ -61,20 +60,20 @@ class Parser:
     # term: factor((MUL | DIV) factor)*
     def term(self):
         self.factor()
-        if self.curr.cmp(Tok.Mult):
+        if self.curr.cmp(table.Mult):
             self.eat("*")
             self.factor()
-        elif self.curr.cmp(Tok.Divide):
+        elif self.curr.cmp(table.Divide):
             self.eat("/")
             self.factor()
 
-    # term((PLUS | MINUS) term)*
+    # term: ((PLUS | MINUS) term)*
     def expr(self):
         self.term()
-        if self.curr.cmp(Tok.Add):
+        if self.curr.cmp(table.Add):
             self.eat("+")
             self.term()
-        elif self.curr.cmp(Tok.Subtract):
+        elif self.curr.cmp(table.Subtract):
             self.eat("-")
             self.term()
 
@@ -84,7 +83,7 @@ class Parser:
     
 if __name__ == '__main__':
     l = Lexer(Definitions)
-    l.read("10 * 5.1").lex().strip(Tok.Whitespace)
+    l.read("10 * 5.1").lex().strip(table.Whitespace)
     print(l.tokens)
     p = Parser(l.tokens)
     p.read()

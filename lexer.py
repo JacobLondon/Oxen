@@ -1,14 +1,13 @@
 from collections import OrderedDict
 import copy
-from enum import Enum, unique
 import re
 from typing import List
 
-# overwritten by user
-@unique
-class Tok(Enum):
-    pass
-Definitions: OrderedDict = None
+# added to by user
+class Syms:
+    def __init__(self, symbols: List[str]):
+        for i, symbol in enumerate(symbols):
+            self.__dict__[symbol] = i
 
 class Token:
     def __init__(self, tok, value):
@@ -25,7 +24,6 @@ class Token:
         return self.tok == token
 
 class Lexer:
-
     def __init__(self, definitions: OrderedDict):
         self.current_file: str = ""
         self.text: str = ""
@@ -74,11 +72,11 @@ class Lexer:
                 exit(-1)
         return self
 
-    def strip(self, token: Tok):
+    def strip(self, token: Syms):
         self.tokens = list(filter(lambda t: t.tok != token, self.tokens))
         return self
 
-    def find(self, pattern: List[Tok]) -> int:
+    def find(self, pattern: List[Syms]) -> int:
         for i, _ in enumerate(self.tokens):
             tokens = [t.tok for t in self.tokens]
             if tokens[i:i+len(pattern)] == pattern:
