@@ -52,35 +52,34 @@ class Lexer:
         text = copy.deepcopy(self.text)
 
         count_newlines = lambda txt: txt.count('\n')
-        indexof_last_newline = lambda txt: len(txt) - txt.rfind('\n')
+        width_to_newline = lambda txt: len(txt) - txt.rfind('\n')
 
         while text:
             matched = False
             for tok, reg in self.definitions.items():
                 # look for the token with the next highest priority
                 found = re.search(reg, text)
-                if not found:
-                    continue
+                if not found: continue
                 # start / end indices of token
                 start, end = found.span()
-                if start != 0:
-                    continue
+                # skip if the match was not the next symbol to process
+                if start != 0: continue
                 # regex was the next item (next starts at index 0), so match
                 matched = True
-                if '\n' in text[start:end]:
-                    #lineno += text[start:end].count('\n')
-                    lineno += count_newlines(text[start:end])
-                    #colno = len(text[start:end]) - text[start:end].rfind('\n')
-                    colno = indexof_last_newline(text[start:end])
+                text_match = text[start:end]
+                if '\n' in text_match:
+                    lineno += count_newlines(text_match)
+                    colno = width_to_newline(text_match)
                 else:
                     colno += end
                 # record token
-                self.tokens.append(Token(tok, text[start:end], lineno, colno))
+                self.tokens.append(Token(tok, text_match, lineno, colno))
+                # delete everything before the current match
                 text = text[end:]
                 break
             # ensure no infinite loop
             if not matched:
-                print(f"{self.current_file}:{lineno}:{colno}\nUnexpected token(s): '{text}'")
+                print(f"{self.current_file}:{lineno}:{colno}: Unexpected token(s): '{text}'")
                 exit(-1)
         return self
 
