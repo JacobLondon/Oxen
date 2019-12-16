@@ -6,13 +6,20 @@ from typing import List
 # added to by user
 class Syms:
     def __init__(self, symbols: List[str]):
+        self.lookup = {}
         for i, symbol in enumerate(symbols):
             self.__dict__[symbol] = i
+            self.lookup[i] = symbol
+
+    def at(self, index):
+        return self.lookup[index]
 
 class Token:
-    def __init__(self, tok, value):
+    def __init__(self, tok, value, lineno, colno):
         self.tok = tok
         self.value = value
+        self.lineno = lineno
+        self.colno = colno
 
     def __str__(self):
         return f"{self.tok}({self.value})"
@@ -63,7 +70,7 @@ class Lexer:
                 else:
                     colno += end
                 # record token
-                self.tokens.append(Token(tok, text[start:end]))
+                self.tokens.append(Token(tok, text[start:end], lineno, colno))
                 text = text[end:]
                 break
             # ensure no infinite loop
