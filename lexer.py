@@ -51,6 +51,9 @@ class Lexer:
         colno  = 0
         text = copy.deepcopy(self.text)
 
+        count_newlines = lambda txt: txt.count('\n')
+        indexof_last_newline = lambda txt: len(txt) - txt.rfind('\n')
+
         while text:
             matched = False
             for tok, reg in self.definitions.items():
@@ -65,8 +68,10 @@ class Lexer:
                 # regex was the next item (next starts at index 0), so match
                 matched = True
                 if '\n' in text[start:end]:
-                    lineno += text[start:end].count('\n')
-                    colno = len(text[start:end]) - text[start:end].rfind('\n')
+                    #lineno += text[start:end].count('\n')
+                    lineno += count_newlines(text[start:end])
+                    #colno = len(text[start:end]) - text[start:end].rfind('\n')
+                    colno = indexof_last_newline(text[start:end])
                 else:
                     colno += end
                 # record token
