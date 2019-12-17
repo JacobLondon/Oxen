@@ -17,6 +17,7 @@ table = Syms([
     "Divide",
     "Add",
     "Subtract",
+    "Comma",
     "Unknown",
 ])
 
@@ -35,6 +36,7 @@ Definitions = OrderedDict({
     table.Divide:     r"\/",
     table.Add:        r"\+",
     table.Subtract:   r"-",
+    table.Comma:      r",",
     table.Unknown:    r".",
 })
 
@@ -76,7 +78,12 @@ class Parser:
     def factor(self):
         if self.curr.cmp(table.Id):
             self.eat(self.curr.value)
-        if self.curr.cmp(table.Float):
+            # function call
+            if self.curr.cmp(table.LParen):
+                self.eat("(")
+                self.arglist()
+                self.eat(")")
+        elif self.curr.cmp(table.Float):
             self.eat(self.curr.value)
         elif self.curr.cmp(table.Integer):
             self.eat(self.curr.value)
@@ -104,6 +111,21 @@ class Parser:
         elif self.curr.cmp(table.Subtract):
             self.eat("-")
             self.term()
+
+    # arglist: LParen expr? (Comma Expr)* RParen
+    # TODO: Fix, does not work
+    def arglist(self):
+        if self.curr.cmp(table.LParen):
+            self.eat("(")
+            while self.curr is not None and not self.curr.cmp(table.RParen):
+                self.expr()
+                if self.curr.cmp(table.Comma):
+                    self.eat(",")
+                # must be a comma and an expression
+                else:
+                    print(f"{self.curr.lineno}:{self.curr.colno}: Unexpected argument symbol '{self.curr.value}'")
+                    exit(-1)
+            self.eat(")")
 
     def stmt(self):
         if self.curr.cmp(table.Id):
@@ -144,7 +166,7 @@ class Parser:
     
 if __name__ == '__main__':
     l = Lexer(Definitions)
-    l.read("if (5 + 1) {a = 5;}").lex().strip(table.Whitespace)
+    l.read("if (5 + 1) {a = w;}").lex().strip(table.Whitespace)
     print(l.tokens)
     p = Parser(l.tokens)
     p.read()
